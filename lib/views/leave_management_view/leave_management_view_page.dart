@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:untitled2/controllers/LeaveManagement/leave_management_controller.dart';
+import 'package:untitled2/controllers/apply_leave_controller.dart';
 
-class LeaveManagementViewPage extends GetView<LeaveManagementController> {
+class LeaveManagementViewPage extends GetView<ApplyLeaveController> {
   LeaveManagementViewPage({super.key}) {
-    Get.put(LeaveManagementController());
+    // Get.put(LeaveManagementController());
+    Get.put(ApplyLeaveController());
+    controller.fetchLeaveTypeDropDowns();
   }
 
   @override
@@ -46,14 +49,14 @@ class LeaveManagementViewPage extends GetView<LeaveManagementController> {
                       ),
                       focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: Colors.black26,
-                            width: 1.0,
-                          )),
+                        color: Colors.black26,
+                        width: 1.0,
+                      )),
                       disabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: Colors.black26,
-                            width: 1.0,
-                          ))),
+                        color: Colors.black26,
+                        width: 1.0,
+                      ))),
                 ),
                 SizedBox(
                   height: 10,
@@ -84,14 +87,14 @@ class LeaveManagementViewPage extends GetView<LeaveManagementController> {
                     ),
                     focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.black26,
-                          width: 1.0,
-                        )),
+                      color: Colors.black26,
+                      width: 1.0,
+                    )),
                     disabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.black26,
-                          width: 1.0,
-                        )),
+                      color: Colors.black26,
+                      width: 1.0,
+                    )),
                   ),
                 ),
                 SizedBox(
@@ -117,40 +120,45 @@ class LeaveManagementViewPage extends GetView<LeaveManagementController> {
                 SizedBox(
                   height: 10,
                 ),
-                DropdownButtonFormField<String>(
-                  value: controller.leaveType.value.isEmpty
-                      ? null
-                      : controller.leaveType.value,
-                  items: ['EL', 'CL']
-                      .map((label) =>
-                      DropdownMenuItem(
-                        child: Text(label.toString()),
-                        value: label,
-                      ))
-                      .toList(),
-                  hint: Text("Select Leave Type"),
-                  onChanged: (value) {
-                    if (value != null) {
-                      controller.leaveType.value = value;
-                    }
-                  },
-                  decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.black26,
-                            width: 1.0,
-                          )),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.black26,
-                            width: 1.0,
-                          )),
-                      disabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.black26,
-                            width: 1.0,
-                          ))),
-                ),
+                Obx(() {
+                  return DropdownButtonFormField<String>(
+                    value: controller.leaveType.value.isEmpty
+                        ? null
+                        : controller.leaveType.value,
+                    items: controller.leaveTypeDropdownList.keys
+                        .map((label) => DropdownMenuItem(
+                              child: Text(
+                                label.toString(),
+                              ),
+                              value: label,
+                            ))
+                        .toList(),
+                    hint: Text("Select Leave Type"),
+                    onChanged: (value) {
+                      if (value != null) {
+                        controller.leaveType.value = value;
+                        controller.leaveTypeValue =
+                            controller.leaveTypeDropdownList[value] ?? "";
+                      }
+                    },
+                    decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Colors.black26,
+                          width: 1.0,
+                        )),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Colors.black26,
+                          width: 1.0,
+                        )),
+                        disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Colors.black26,
+                          width: 1.0,
+                        ))),
+                  );
+                }),
                 SizedBox(
                   height: 10,
                 ),
@@ -173,9 +181,9 @@ class LeaveManagementViewPage extends GetView<LeaveManagementController> {
                     hintText: "Enter Leave Balance",
                     enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.black26,
-                          width: 1.0,
-                        )),
+                      color: Colors.black26,
+                      width: 1.0,
+                    )),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Colors.black26,
@@ -219,8 +227,7 @@ class LeaveManagementViewPage extends GetView<LeaveManagementController> {
                       lastDate: DateTime.now(),
                     );
                     controller.startDateTEController.text =
-                    "${selectDate?.day}/${selectDate?.month}/${selectDate
-                        ?.year}";
+                        "${selectDate?.day}/${selectDate?.month}/${selectDate?.year}";
                   },
                   child: TextField(
                     style: TextStyle(
@@ -288,8 +295,7 @@ class LeaveManagementViewPage extends GetView<LeaveManagementController> {
                       lastDate: DateTime.now(),
                     );
                     controller.endDateTEController.text =
-                    "${selectDate?.day}/${selectDate?.month}/${selectDate
-                        ?.year}";
+                        "${selectDate?.day}/${selectDate?.month}/${selectDate?.year}";
                   },
                   child: TextField(
                     style: TextStyle(
@@ -384,6 +390,7 @@ class LeaveManagementViewPage extends GetView<LeaveManagementController> {
                       "*",
                       style: TextStyle(
                         color: Colors.red,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
@@ -392,15 +399,37 @@ class LeaveManagementViewPage extends GetView<LeaveManagementController> {
                   height: 10,
                 ),
                 InkWell(
-                  onTap: () {
-
+                  onTap: () async {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text("Year"),
+                            content: SizedBox(
+                              height: 300,
+                              width: 300,
+                              child: YearPicker(
+                                firstDate: DateTime(1950),
+                                lastDate: DateTime.now(),
+                                selectedDate: DateTime.now(),
+                                onChanged: (value) {
+                                  controller.yearTEController.text =
+                                      "${value.year}";
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                          );
+                        });
                   },
-
                   child: TextField(
-                    onChanged: (value) {
-
-                    },
+                    style: TextStyle(
+                      color: Colors.black26,
+                    ),
                     controller: controller.yearTEController,
+                    enableInteractiveSelection: false,
+                    autofocus: false,
+                    enabled: false,
                     decoration: InputDecoration(
                       hintText: "Select Year",
                       enabledBorder: OutlineInputBorder(
@@ -421,12 +450,29 @@ class LeaveManagementViewPage extends GetView<LeaveManagementController> {
                           width: 1,
                         ),
                       ),
+                      suffixIcon: Icon(
+                        Icons.date_range,
+                      ),
                     ),
                   ),
                 ),
-
                 SizedBox(
                   height: 10,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    controller.postApplyLeave().then((value) {
+                      if (value.isNotEmpty) {
+                        Get.snackbar("Request Failed", value);
+                      } else {
+                        Get.snackbar(
+                            "Request Success", "Leave applied successfully");
+                      }
+                    });
+                  },
+                  child: Text(
+                    "Apply Leave",
+                  ),
                 ),
               ],
             ),
@@ -435,6 +481,4 @@ class LeaveManagementViewPage extends GetView<LeaveManagementController> {
       ),
     );
   }
-
-
 }

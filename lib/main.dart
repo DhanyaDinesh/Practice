@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:untitled2/views/Leave_Management_view/leave_management_view_page.dart';
-
+import 'package:untitled2/views/add_item.dart';
+import 'package:untitled2/views/leave_management_view/leave_approval_view_page.dart';
+import 'package:untitled2/views/leave_management_view/leave_details_view_page.dart';
+import 'package:untitled2/views/leave_management_view/leave_transactions_view_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,8 +37,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LeaveManagementViewPage(),
+      home: LeaveTransactionView(),
     );
   }
 }
-

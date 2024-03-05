@@ -42,41 +42,48 @@ class AddItemPage extends GetView<AddItemPageController> {
           ),
           body: Column(
             children: [
-              TextField(
-                controller: controller.nameTeController,
-                textInputAction: TextInputAction.next,
-                onChanged: (value) {
-                  controller.name.value = value;
-                },
-                decoration: InputDecoration(hintText: "Enter a name"),
+              Semantics(
+                child: TextField(
+                  controller: controller.nameTeController,
+                  textInputAction: TextInputAction.next,
+                  onChanged: (value) {
+                    controller.name.value = value;
+                  },
+                  decoration: InputDecoration(hintText: "Enter a name"),
+                ),
               ),
-              TextField(
-                controller: controller.ageTeController,
-                textInputAction: TextInputAction.done,
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  try {
-                    controller.age.value = int.parse(value);
-                  } catch (e) {
-                    e.printError();
-                  }
-                },
-                decoration: InputDecoration(hintText: "Enter a Age"),
+              Semantics(
+                label: "Age",
+                child: TextField(
+                  controller: controller.ageTeController,
+                  textInputAction: TextInputAction.done,
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    try {
+                      controller.age.value = int.parse(value);
+                    } catch (e) {
+                      e.printError();
+                    }
+                  },
+                  decoration: InputDecoration(hintText: "Enter a Age"),
+                ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  var userModel = UserModelItemList(
-                      name: controller.name.value, age: controller.age.value);
-                  if(index != -1) {
-                    listController.updateUser(index, userModel);
-                  }else {
-                    listController.addUser(
-                     userModel
-                    );
-                  }
-                  Get.back(result: {"isAdded": true});
-                },
-                child: Text(from == "edit" ? "update" : "Save"),
+              Semantics(
+                child: ElevatedButton(
+                  onPressed: () {
+                    var userModel = UserModelItemList(
+                        name: controller.name.value, age: controller.age.value);
+                    if(index != -1) {
+                      listController.updateUser(index, userModel);
+                    }else {
+                      listController.addUser(
+                       userModel
+                      );
+                    }
+                    Get.back(result: {"isAdded": true});
+                  },
+                  child: Text(from == "edit" ? "update" : "Save"),
+                ),
               ),
               Obx(() {
                 return Text(
